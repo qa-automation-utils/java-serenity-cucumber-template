@@ -1,0 +1,163 @@
+defaultTasks "clean", "test", "aggregate"
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    jcenter()
+}
+
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "net.serenity-bdd:serenity-gradle-plugin:3.2.5",
+              "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3"
+  }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+ext {
+    libs = [
+        api : [
+            restAssured : [
+                jsonSchemaValidator : "io.rest-assured:json-schema-validator:${restAssuredVersion}"
+            ] 
+        ],
+        
+        assertion : [
+            assertj : "org.assertj:assertj-core:${assertJVersion}",
+            hamcrest : "org.hamcrest:hamcrest:${hamcrestVersion}"
+        ],
+        
+        commonUtil : [
+            apacheCommonsLang3 : "org.apache.commons:commons-lang3:${apacheCommonsVersion}",        
+            javaUtils : "com.github.qa-automation-utils:java-utils:${javaUtilsVersion}"
+        ],        
+        
+        json : [
+            jackson : [
+				annotations : "com.fasterxml.jackson.core:jackson-annotations:${jacksonCoreVersion}",            
+                core : "com.fasterxml.jackson.core:jackson-core:${jacksonCoreVersion}",
+                databind : "com.fasterxml.jackson.core:jackson-databind:${jacksonCoreVersion}"
+            ],
+            jsonpath : "com.jayway.jsonpath:json-path:${jsonpathVersion}"
+        ],
+        
+        junit : [
+            junit : "junit:junit:${junitVersion}",
+            jupiterApi : "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",
+            jupiterEngine : "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}",
+            platformLauncher : "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}",            
+            vintageEngine : "org.junit.vintage:junit-vintage-engine:${junitVintageVersion}"
+        ],
+        
+        logger : [
+            log4j : "org.apache.logging.log4j:log4j-core:${log4jVersion}",        
+            logback : "ch.qos.logback:logback-classic:${logbackVersion}",
+            slf4j : "org.slf4j:slf4j-api:${slf4jVersion}"            
+        ],                 
+                
+        serenity : [
+            core : "net.serenity-bdd:serenity-core:${serenityCoreVersion}",
+            cucumber : "net.serenity-bdd:serenity-cucumber:${serenityCucumberVersion}",
+            ensure : "net.serenity-bdd:serenity-ensure:${serenityCoreVersion}",           
+            junit : "net.serenity-bdd:serenity-junit:${serenityCoreVersion}",             
+            restAssured : "net.serenity-bdd:serenity-rest-assured:${serenityCoreVersion}",            
+            screenplay : "net.serenity-bdd:serenity-screenplay:${serenityCoreVersion}",
+            screenplayRest : "net.serenity-bdd:serenity-screenplay-rest:${serenityCoreVersion}",
+            screenplayWebdriver : "net.serenity-bdd:serenity-screenplay-webdriver:${serenityCoreVersion}"            
+        ]  
+    ]
+}
+
+dependencies {
+    implementation libs.logger.logback
+
+    testImplementation libs.api.restAssured.jsonSchemaValidator,  
+        
+        libs.assertion.assertj,
+    	libs.assertion.hamcrest, 
+    	
+    	libs.commonUtil.apacheCommonsLang3,    	
+    	libs.commonUtil.javaUtils,    	 
+    	
+    	libs.json.jackson.annotations,
+    	libs.json.jackson.core,
+    	libs.json.jackson.databind,
+    	libs.json.jsonpath,    
+    	
+    	libs.junit.junit,
+    	libs.junit.jupiterApi,
+    	libs.junit.jupiterEngine,    	
+    	libs.junit.platformLauncher,
+    	libs.junit.vintageEngine,    	
+    	
+    	libs.serenity.core,
+    	libs.serenity.cucumber,
+    	libs.serenity.ensure,
+    	libs.serenity.junit,    		
+    	libs.serenity.screenplay,
+    	libs.serenity.screenplayRest,
+    	libs.serenity.screenplayWebdriver,    	
+    	libs.serenity.restAssured
+}
+
+test {
+    filter {
+        include 'serenity/cucumber/template/runners/theme01/Theme01Runner.class'
+        include 'serenity/cucumber/template/runners/theme02/Theme02Runner.class'
+    }
+    
+    testLogging.showStandardStreams = true
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+    
+    systemProperties = ["TestEnvironment": System.getProperty("env")]
+    systemProperties System.getProperties()
+    systemProperty "cucumber.options", System.getProperty("cucumber.options")
+    systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
+}
+
+// Serenity configurations ***************************************************************************************************
+
+apply plugin: "net.serenity-bdd.serenity-gradle-plugin"
+apply plugin: "net.serenity-bdd.aggregator"
+
+serenity {
+    // Specify the root package of any JUnit acceptance tests to appear in the Serenity report
+    testRoot = "starter"
+    // Specify the root directory of any Cucumber feature files
+    requirementsDir = "src/test/resources/features"
+}
+
+gradle.startParameter.continueOnFailure = true
+
+test.finalizedBy(aggregate)
+
+// Sonar configurations ******************************************************************************************************
+
+apply plugin: "org.sonarqube"
+
+sonarqube {
+    properties {
+        property "sonar.sources", "src"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.java.binaries", "build/classes"
+        property "sonar.coverage.exclusions", "**/*.java"
+        property "sonar.exclusions", "**/*Generated.java"
+        property "sonar.tests", ""
+    }
+}

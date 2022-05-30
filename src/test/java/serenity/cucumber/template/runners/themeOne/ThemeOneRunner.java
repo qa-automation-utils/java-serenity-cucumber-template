@@ -6,7 +6,7 @@
  * <p>NOTICE: This file is subject to the terms and conditions defined in file 'LICENSE', which is
  * part of this source code package.
  */
-package serenity.cucumber.template.runners.theme02;
+package serenity.cucumber.template.runners.themeOne;
 
 import org.junit.runner.RunWith;
 import io.cucumber.junit.CucumberOptions;
@@ -14,6 +14,6 @@ import net.serenitybdd.cucumber.CucumberWithSerenity;
 
 @RunWith(CucumberWithSerenity.class)
 @CucumberOptions(
-    features = {"src/test/resources/features/tema_02"},
-    glue = {"serenity.cucumber.template.steps.hooks", "serenity.cucumber.template.steps.theme02"})
-public class Theme02Runner {}
+    features = {"src/test/resources/features/tema_uno"},
+    glue = {"serenity.cucumber.template.steps.hooks", "serenity.cucumber.template.steps.themeOne"})
+public class ThemeOneRunner {}

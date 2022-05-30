@@ -1,10 +1,10 @@
-package serenity.cucumber.template.steps.theme02;
+package serenity.cucumber.template.steps.themeTwo;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 
-public class Theme02Hooks {
+public class ThemeTwoHooks {
   
   @Before
   public void setupScenario(Scenario scenario) {

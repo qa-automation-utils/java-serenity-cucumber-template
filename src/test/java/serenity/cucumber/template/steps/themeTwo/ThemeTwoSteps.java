@@ -1,8 +1,8 @@
-package serenity.cucumber.template.steps.theme02;
+package serenity.cucumber.template.steps.themeTwo;
 
 import io.cucumber.java.en.*;
 
-public class Theme02Steps {
+public class ThemeTwoSteps {
   
   @Given("^precondiciones del escenario T02-C02-.+ \"?([^\"]+)\"?$")
   public void givenMethod01(String parameter) {

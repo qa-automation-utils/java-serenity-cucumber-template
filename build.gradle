@@ -7,7 +7,6 @@ apply plugin: 'idea'
 repositories {
     mavenCentral()
     mavenLocal()
-    jcenter()
 }
 
 buildscript {
@@ -66,7 +65,7 @@ ext {
         logger : [
             log4j : "org.apache.logging.log4j:log4j-core:${log4jVersion}",        
             logback : "ch.qos.logback:logback-classic:${logbackVersion}",
-            slf4j : "org.slf4j:slf4j-api:${slf4jVersion}"            
+            slf4j : "org.slf4j:slf4j-api:${slf4jVersion}"
         ],                 
                 
         serenity : [
@@ -116,8 +115,8 @@ dependencies {
 
 test {
     filter {
-        include 'serenity/cucumber/template/runners/theme01/Theme01Runner.class'
-        include 'serenity/cucumber/template/runners/theme02/Theme02Runner.class'
+        include 'serenity/cucumber/template/runners/themeOne/ThemeOneRunner.class'
+        include 'serenity/cucumber/template/runners/themeTwo/ThemeTwoRunner.class'
     }
     
     testLogging.showStandardStreams = true
